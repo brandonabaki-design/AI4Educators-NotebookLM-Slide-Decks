@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Presentations for Educators</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4f46e5', // Indigo 600
+                        secondary: '#2563eb', // Blue 600
+                        accent: '#06b6d4', // Cyan 500
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar for a premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Video Aspect Ratio Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Checkbox animation */
+        .checkbox-custom:checked + div {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .checkbox-custom:checked + div svg {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-primary selection:text-white pb-20">
+
+    <!-- Sticky Navigation & Progress Bar -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span class="font-heading font-bold text-xl text-slate-900">EduAI Mastery</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="progress-text" class="text-sm font-medium text-slate-500">0% Completed</span>
+                <div class="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-primary to-accent w-0 transition-all duration-500 ease-out"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+        
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <div class="inline-flex items-center space-x-2 bg-white border border-slate-200 rounded-full px-4 py-1.5 mb-6 shadow-sm">
+                <span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+                <span class="text-sm font-medium text-slate-600">Professional Development Course</span>
+            </div>
+            <h1 class="font-heading text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
+                Transform Lesson Planning with <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">AI Presentations</span>
+            </h1>
+            <p class="text-lg lg:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Learn how to leverage NotebookLM to automatically generate, resource, and refine world-class PowerPoint slide decks in minutes. Reclaim your time and inspire your students.
+            </p>
+            <a href="#course-content" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-200 bg-primary border border-transparent rounded-full hover:bg-secondary hover:shadow-lg hover:-translate-y-0.5">
+                Start the Masterclass
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Benefits Section -->
+    <section class="max-w-6xl mx-auto px-6 mb-24">
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Benefit 1 -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">Save Hours of Prep</h3>
+                <p class="text-slate-600 leading-relaxed">Stop staring at blank slides. Turn existing lesson plans, PDFs, or links into structured presentations instantly.</p>
+            </div>
+            <!-- Benefit 2 -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-blue-50 text-secondary rounded-2xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">Zero Resources Needed</h3>
+                <p class="text-slate-600 leading-relaxed">Don't have a lesson plan yet? Use AI web search to compile pedagogical research and build from scratch.</p>
+            </div>
+            <!-- Benefit 3 -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-cyan-50 text-accent rounded-2xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">Complete Control</h3>
+                <p class="text-slate-600 leading-relaxed">Direct the AI to revise specific slides, add cultural context, or change terminology before exporting to PowerPoint.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Course Content -->
+    <section id="course-content" class="max-w-5xl mx-auto px-6 relative">
+        <!-- Vertical Line for Timeline -->
+        <div class="hidden md:block absolute left-12 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+
+        <div class="space-y-24">
+            
+            <!-- Module 1 -->
+            <div class="relative flex flex-col md:flex-row gap-8 lg:gap-16">
+                <!-- Timeline Node -->
+                <div class="hidden md:flex flex-col items-center z-10">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">1</div>
+                </div>
+                
+                <div class="flex-1 bg-white rounded-[2rem] p-6 lg:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="text-primary font-semibold tracking-wider uppercase text-sm mb-2 block">The Foundation</span>
+                            <h2 class="text-3xl font-heading font-bold text-slate-900">Creating Your First Deck</h2>
+                        </div>
+                        <label class="cursor-pointer relative flex items-center justify-center group" title="Mark as completed">
+                            <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                            <div class="w-8 h-8 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center transition-colors group-hover:border-primary">
+                                <svg class="w-5 h-5 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <p class="text-slate-600 mb-8 text-lg">Learn how to upload your existing materials into NotebookLM and use customized prompts to generate the perfect baseline presentation tailored to your classroom.</p>
+                    
+                    <div class="video-container mb-8">
+                        <iframe src="https://www.youtube.com/embed/9xeFK6nyleE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <a href="https://www.youtube.com/watch?v=9xeFK6nyleE" target="_blank" class="text-sm text-primary hover:underline mb-8 inline-block">Watch on YouTube directly &rarr;</a>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                        <h4 class="font-bold text-slate-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            Step-by-Step Guide
+                        </h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="text-primary font-bold mr-2">1.</span> Create a new notebook in NotebookLM and upload your sources (lesson plans, CV, or web links).</li>
+                            <li class="flex items-start"><span class="text-primary font-bold mr-2">2.</span> Click the customization arrow next to "Slide Deck" to access advanced settings.</li>
+                            <li class="flex items-start"><span class="text-primary font-bold mr-2">3.</span> Choose your format: Detailed slides vs. Presenter slides (for a guided presentation).</li>
+                            <li class="flex items-start"><span class="text-primary font-bold mr-2">4.</span> Write a highly specific prompt. <em>Example: "Include real-life UAE examples and ensure it is culturally sensitive to Islamic values."</em></li>
+                            <li class="flex items-start"><span class="text-primary font-bold mr-2">5.</span> <strong>Pro-Tip:</strong> Save your winning prompts on a sticky note app to easily copy/paste them for future lessons!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="relative flex flex-col md:flex-row gap-8 lg:gap-16">
+                <!-- Timeline Node -->
+                <div class="hidden md:flex flex-col items-center z-10">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">2</div>
+                </div>
+                
+                <div class="flex-1 bg-white rounded-[2rem] p-6 lg:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="text-secondary font-semibold tracking-wider uppercase text-sm mb-2 block">Resource Generation</span>
+                            <h2 class="text-3xl font-heading font-bold text-slate-900">Building From Scratch</h2>
+                        </div>
+                        <label class="cursor-pointer relative flex items-center justify-center group" title="Mark as completed">
+                            <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                            <div class="w-8 h-8 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center transition-colors group-hover:border-secondary">
+                                <svg class="w-5 h-5 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <p class="text-slate-600 mb-8 text-lg">What happens if you don't have a lesson plan ready? Discover how to use AI web search to compile resources and instantly generate a curriculum foundation.</p>
+                    
+                    <div class="video-container mb-8">
+                        <iframe src="https://www.youtube.com/embed/kLAlBduxzhU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <a href="https://www.youtube.com/watch?v=kLAlBduxzhU" target="_blank" class="text-sm text-secondary hover:underline mb-8 inline-block">Watch on YouTube directly &rarr;</a>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                        <h4 class="font-bold text-slate-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                            Step-by-Step Guide
+                        </h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="text-secondary font-bold mr-2">1.</span> In the source selection area, opt to search the web instead of uploading a file.</li>
+                            <li class="flex items-start"><span class="text-secondary font-bold mr-2">2.</span> Type your learning objective as a query. <em>Example: "I need to teach a lesson about equal groups to grade 3 students."</em></li>
+                            <li class="flex items-start"><span class="text-secondary font-bold mr-2">3.</span> Let NotebookLM compile a list of authoritative educational sources (e.g., NWEA Map Growth resources, activity sites).</li>
+                            <li class="flex items-start"><span class="text-secondary font-bold mr-2">4.</span> Import all relevant sources.</li>
+                            <li class="flex items-start"><span class="text-secondary font-bold mr-2">5.</span> Use these imported web sources as the factual background to generate your new slide deck!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="relative flex flex-col md:flex-row gap-8 lg:gap-16">
+                <!-- Timeline Node -->
+                <div class="hidden md:flex flex-col items-center z-10">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">3</div>
+                </div>
+                
+                <div class="flex-1 bg-white rounded-[2rem] p-6 lg:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="text-accent font-semibold tracking-wider uppercase text-sm mb-2 block">Refinement</span>
+                            <h2 class="text-3xl font-heading font-bold text-slate-900">Revising & Exporting</h2>
+                        </div>
+                        <label class="cursor-pointer relative flex items-center justify-center group" title="Mark as completed">
+                            <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                            <div class="w-8 h-8 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center transition-colors group-hover:border-accent">
+                                <svg class="w-5 h-5 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <p class="text-slate-600 mb-8 text-lg">The AI's first draft is rarely the final draft. Master the revision tool to tweak specific slides, replace text, and finally download your work as a ready-to-teach PowerPoint file.</p>
+                    
+                    <div class="video-container mb-8">
+                        <iframe src="https://www.youtube.com/embed/RhAOqY9taJE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <a href="https://www.youtube.com/watch?v=RhAOqY9taJE" target="_blank" class="text-sm text-accent hover:underline mb-8 inline-block">Watch on YouTube directly &rarr;</a>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                        <h4 class="font-bold text-slate-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Step-by-Step Guide
+                        </h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="text-accent font-bold mr-2">1.</span> Click on any generated slide to enlarge the preview.</li>
+                            <li class="flex items-start"><span class="text-accent font-bold mr-2">2.</span> Spot an error or something you dislike? Click the <strong>Revise</strong> button.</li>
+                            <li class="flex items-start"><span class="text-accent font-bold mr-2">3.</span> Type specific instructions. <em>Examples: "Remove fostering psychological safety", "Change Fujairah to Ras Al Khaimah", or "Do not include data analysis as a responsibility."</em></li>
+                            <li class="flex items-start"><span class="text-accent font-bold mr-2">4.</span> Queue up multiple changes across slides, then click "Generate revised deck" (takes ~5 mins).</li>
+                            <li class="flex items-start"><span class="text-accent font-bold mr-2">5.</span> Click the three dots menu (...) to <strong>Download as PowerPoint</strong> (.pptx) or PDF. You can also click "Show prompt" to copy the AI logic for next time!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Interactive Sandbox Section -->
+    <section class="max-w-4xl mx-auto px-6 mt-32 mb-20">
+        <div class="bg-slate-900 rounded-[2rem] p-8 md:p-12 shadow-2xl overflow-hidden relative">
+            <!-- Decorative blur -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/30 blur-[80px] rounded-full pointer-events-none"></div>
+            
+            <div class="relative z-10 text-white">
+                <h2 class="text-3xl font-heading font-bold mb-2">Interactive Prompt Builder</h2>
+                <p class="text-slate-400 mb-8">As mentioned in Video 1, a great system prompt is key. Use this tool to generate a perfectly structured prompt to paste into NotebookLM.</p>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Your Role</label>
+                        <input type="text" id="role" placeholder="e.g., High School Science Teacher" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Target Audience (Grade/Level)</label>
+                        <input type="text" id="audience" placeholder="e.g., 8th Grade Students" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Lesson Topic</label>
+                        <input type="text" id="topic" placeholder="e.g., Introduction to the Water Cycle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Special Context or Rules (Optional)</label>
+                        <input type="text" id="context" placeholder="e.g., Include local UAE geography examples, make it interactive" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                </div>
+
+                <button onclick="generatePrompt()" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 px-6 rounded-xl transition-colors duration-200 mb-8">
+                    Generate My Prompt
+                </button>
+
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 relative group">
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 font-semibold">Your Generated Prompt</p>
+                    <p id="generated-prompt" class="text-slate-300 font-mono text-sm leading-relaxed min-h-[4rem]">
+                        Fill out the details above and click generate to create your custom NotebookLM prompt here.
+                    </p>
+                    <button id="copy-btn" onclick="copyPrompt()" class="absolute top-4 right-4 bg-slate-800 hover:bg-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary">
+                        Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-10 text-slate-500 text-sm border-t border-slate-200 mt-20">
+        <p>Expertly crafted for educators. Transforming classrooms with AI.</p>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Progress Bar Logic
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.module-checkbox');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const progress = (checked / checkboxes.length) * 100;
+            
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').innerText = `${Math.round(progress)}% Completed`;
+        }
+
+        // Prompt Generator Logic
+        function generatePrompt() {
+            const role = document.getElementById('role').value || '[Your Role]';
+            const topic = document.getElementById('topic').value || '[Topic]';
+            const audience = document.getElementById('audience').value || '[Audience]';
+            const context = document.getElementById('context').value;
+
+            let prompt = `Act as an expert instructional designer and create a slide deck presentation for ${topic}. I am presenting as a ${role} to an audience of ${audience}.`;
+            
+            if (context) {
+                prompt += ` \n\nCRITICAL CONTEXT & RULES: ${context}.`;
+            }
+            
+            prompt += ` \n\nEnsure the language is accessible for the target audience. Focus on clear pedagogical structures (hook, instruction, activity, check for understanding). Format for a clean, highly visual presentation.`;
+
+            document.getElementById('generated-prompt').innerText = prompt;
+            
+            // Reset copy button text
+            document.getElementById('copy-btn').innerText = 'Copy to Clipboard';
+            document.getElementById('copy-btn').classList.remove('bg-green-600', 'hover:bg-green-500', 'text-white');
+        }
+
+        // Copy to Clipboard Logic
+        function copyPrompt() {
+            const text = document.getElementById('generated-prompt').innerText;
+            if (text.includes("Fill out the details")) return; // Don't copy placeholder
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.innerText = 'Copied Successfully!';
+                btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
+                
+                setTimeout(() => { 
+                    btn.innerText = 'Copy to Clipboard'; 
+                    btn.classList.remove('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>

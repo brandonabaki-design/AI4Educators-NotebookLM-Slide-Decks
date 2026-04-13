@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Gamification -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -176,7 +178,7 @@
                                     <em class="not-italic font-medium text-slate-800">Example:</em> 
                                     <span class="italic">"Include real-life UAE examples and ensure it is culturally sensitive to Islamic values."</span>
                                 </div>
-                                <button onclick="fillSandbox('High School Teacher', 'High School Students (Grades 9-12)', 'Local UAE Geography and Culture', 'Include real-life UAE examples and ensure it is culturally sensitive to Islamic values.')" class="mt-3 text-xs font-semibold text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors flex items-center">
+                                <button onclick="fillSandbox('High School Teacher', 'High School Students (Grades 9-12)', 'Local UAE Geography and Culture', 'UAE MOE (Ministry of Education)', 'Include real-life UAE examples and ensure it is culturally sensitive to Islamic values.')" class="mt-3 text-xs font-semibold text-primary bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors flex items-center">
                                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                                     Try this in Sandbox
                                 </button>
@@ -251,7 +253,7 @@
                                     <em class="not-italic font-medium text-slate-800">Example:</em> 
                                     <span class="italic">"I need to teach a lesson about equal groups to grade 3 students."</span>
                                 </div>
-                                <button onclick="fillSandbox('Elementary School Teacher', 'Elementary Students (Grades 1-5)', 'Equal Groups and Basic Multiplication', '')" class="mt-3 text-xs font-semibold text-secondary bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center">
+                                <button onclick="fillSandbox('Elementary School Teacher', 'Elementary Students (Grades 1-5)', 'Equal Groups and Basic Multiplication', 'US Common Core', '')" class="mt-3 text-xs font-semibold text-secondary bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center">
                                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                                     Try this in Sandbox
                                 </button>
@@ -417,10 +419,26 @@
                         </div>
                     </div>
                     
-                    <div class="md:col-span-2">
+                    <div>
                         <label class="block text-sm font-medium text-slate-300 mb-2">Lesson Topic</label>
                         <input type="text" id="topic" placeholder="e.g., Introduction to the Water Cycle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
                     </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Curriculum Framework</label>
+                        <div class="relative">
+                            <input type="text" id="curriculum" list="curriculum-options" placeholder="e.g., US Common Core, IB, MOE..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <datalist id="curriculum-options">
+                                <option value="US Common Core"></option>
+                                <option value="UK National Curriculum"></option>
+                                <option value="IB (International Baccalaureate)"></option>
+                                <option value="UAE MOE (Ministry of Education)"></option>
+                                <option value="Australian Curriculum"></option>
+                                <option value="CBSE (India)"></option>
+                            </datalist>
+                        </div>
+                    </div>
+
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-slate-300 mb-2">Special Context or Rules (Optional)</label>
                         <input type="text" id="context" placeholder="e.g., Include local UAE geography examples, make it interactive" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
@@ -431,7 +449,7 @@
                     Generate My Prompt
                 </button>
 
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 relative group">
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 relative group mb-4">
                     <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 font-semibold">Your Generated Prompt</p>
                     <p id="generated-prompt" class="text-slate-300 font-mono text-sm leading-relaxed min-h-[4rem]">
                         Fill out the details above and click generate to create your custom NotebookLM prompt here.
@@ -439,6 +457,17 @@
                     <button id="copy-btn" onclick="copyPrompt()" class="absolute top-4 right-4 bg-slate-800 hover:bg-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary">
                         Copy to Clipboard
                     </button>
+                </div>
+
+                <!-- Why This Works (Educational Callout) -->
+                <div id="why-it-works" class="hidden bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-5 transition-all duration-500">
+                    <h5 class="text-indigo-300 font-semibold text-sm mb-2 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Anatomy of a Great Prompt
+                    </h5>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Notice the structure: <strong>Persona</strong> (Act as an expert...) + <strong>Task</strong> (create a slide deck...) + <strong>Target Audience</strong> + <strong>Constraints</strong> (Curriculum/Context). This framework prevents AI hallucinations and ensures the output matches your classroom's exact needs!
+                    </p>
                 </div>
             </div>
         </div>
@@ -452,17 +481,26 @@
     <!-- Floating Contact Menu -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
         <!-- LinkedIn -->
-        <a href="https://www.linkedin.com/in/brandon-a-baki-19a81735b/" target="_blank" class="w-12 h-12 bg-[#0077b5] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#005e93] transition-all duration-300" title="Connect on LinkedIn">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        </a>
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-4 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1 before:border-4 before:border-transparent before:border-l-slate-700">Connect on LinkedIn</span>
+            <a href="https://www.linkedin.com/in/brandon-a-baki-19a81735b/" target="_blank" class="w-12 h-12 bg-[#0077b5] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#005e93] transition-all duration-300" title="Connect on LinkedIn">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+        </div>
         <!-- YouTube -->
-        <a href="https://www.youtube.com/@AIforEducators-AE/videos" target="_blank" class="w-12 h-12 bg-[#FF0000] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#cc0000] transition-all duration-300" title="Watch on YouTube">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </a>
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-4 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1 before:border-4 before:border-transparent before:border-l-slate-700">Watch on YouTube</span>
+            <a href="https://www.youtube.com/@AIforEducators-AE/videos" target="_blank" class="w-12 h-12 bg-[#FF0000] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#cc0000] transition-all duration-300" title="Watch on YouTube">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+        </div>
         <!-- WhatsApp -->
-        <a href="https://chat.whatsapp.com/DSIG8n8bSliJRORaethdYl" target="_blank" class="w-12 h-12 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#1ebe57] transition-all duration-300" title="Join WhatsApp Group">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-        </a>
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-4 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1 before:border-4 before:border-transparent before:border-l-slate-700">Join WhatsApp Group</span>
+            <a href="https://chat.whatsapp.com/DSIG8n8bSliJRORaethdYl" target="_blank" class="w-12 h-12 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:-translate-y-1 hover:shadow-xl hover:bg-[#1ebe57] transition-all duration-300" title="Join WhatsApp Group">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            </a>
+        </div>
     </div>
 
     <!-- Interactive Scripts -->
@@ -485,6 +523,16 @@
                 progressText.innerHTML = '🎉 Course Completed!';
                 progressText.classList.add('text-green-600', 'font-bold');
                 progressText.classList.remove('text-slate-500');
+                
+                // Trigger Confetti
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#4f46e5', '#06b6d4', '#22c55e', '#eab308']
+                    });
+                }
             } else {
                 // Default State
                 progressBar.classList.add('bg-gradient-to-r', 'from-primary', 'to-accent');
@@ -496,10 +544,11 @@
         }
 
         // Fill Sandbox from lesson examples
-        function fillSandbox(role, audience, topic, context) {
+        function fillSandbox(role, audience, topic, curriculum, context) {
             document.getElementById('role').value = role;
             document.getElementById('audience').value = audience;
             document.getElementById('topic').value = topic;
+            document.getElementById('curriculum').value = curriculum;
             document.getElementById('context').value = context;
             
             // Scroll to sandbox smoothly
@@ -523,17 +572,26 @@
             const role = document.getElementById('role').value || '[Your Role]';
             const topic = document.getElementById('topic').value || '[Topic]';
             const audience = document.getElementById('audience').value || '[Audience]';
+            const curriculum = document.getElementById('curriculum').value;
             const context = document.getElementById('context').value;
 
-            let prompt = `Act as an expert instructional designer and create a slide deck presentation for ${topic}. I am presenting as a ${role} to an audience of ${audience}.`;
+            // Creating an HTML string so we can highlight the dynamic variables
+            let promptHTML = `Act as an expert instructional designer and create a slide deck presentation for <span class="text-accent font-semibold">${topic}</span>. I am presenting as a <span class="text-accent font-semibold">${role}</span> to an audience of <span class="text-accent font-semibold">${audience}</span>.`;
             
+            if (curriculum) {
+                promptHTML += ` <br><br>Please align the content, standards, and terminology with the <span class="text-accent font-semibold">${curriculum}</span> framework.`;
+            }
+
             if (context) {
-                prompt += ` \n\nCRITICAL CONTEXT & RULES: ${context}.`;
+                promptHTML += ` <br><br>CRITICAL CONTEXT & RULES: <span class="text-accent font-semibold">${context}</span>.`;
             }
             
-            prompt += ` \n\nEnsure the language is accessible for the target audience. Focus on clear pedagogical structures (hook, instruction, activity, check for understanding). Format for a clean, highly visual presentation.`;
+            promptHTML += ` <br><br>Ensure the language is accessible for the target audience. Focus on clear pedagogical structures (hook, instruction, activity, check for understanding). Format for a clean, highly visual presentation.`;
 
-            document.getElementById('generated-prompt').innerText = prompt;
+            document.getElementById('generated-prompt').innerHTML = promptHTML;
+            
+            // Show the "Why this works" educational callout
+            document.getElementById('why-it-works').classList.remove('hidden');
             
             // Reset copy button text
             document.getElementById('copy-btn').innerText = 'Copy to Clipboard';
@@ -545,16 +603,39 @@
             const text = document.getElementById('generated-prompt').innerText;
             if (text.includes("Fill out the details")) return; // Don't copy placeholder
             
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.getElementById('copy-btn');
-                btn.innerText = 'Copied Successfully!';
-                btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
+            try {
+                // Create a temporary textarea for iframe fallback compatibility
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
                 
-                setTimeout(() => { 
-                    btn.innerText = 'Copy to Clipboard'; 
-                    btn.classList.remove('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
-                }, 3000);
-            });
+                // Move it out of view
+                textArea.style.position = "absolute";
+                textArea.style.left = "-999999px";
+                
+                document.body.appendChild(textArea);
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                if (successful) {
+                    const btn = document.getElementById('copy-btn');
+                    btn.innerText = 'Copied Successfully!';
+                    btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
+                    
+                    setTimeout(() => { 
+                        btn.innerText = 'Copy to Clipboard'; 
+                        btn.classList.remove('bg-green-600', 'hover:bg-green-500', 'text-white', 'border-transparent');
+                    }, 3000);
+                } else {
+                    console.error('Fallback copy command failed.');
+                }
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                const btn = document.getElementById('copy-btn');
+                btn.innerText = 'Copy Failed';
+                setTimeout(() => { btn.innerText = 'Copy to Clipboard'; }, 3000);
+            }
         }
     </script>
 </body>

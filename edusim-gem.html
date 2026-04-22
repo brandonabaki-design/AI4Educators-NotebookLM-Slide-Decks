@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSim Gem V5.1 Masterclass · AI for Educators Hub</title>
+    <meta name="description" content="Launch adaptive, tiered, standards-aligned science simulations in minutes with the free EduSim Engine V5.1 Gem for Gemini — built for IB/US classrooms with deep UAE context.">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Gamification -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#4f46e5',   // Indigo 600 (hub identity)
+                        secondary: '#2563eb', // Blue 600
+                        accent: '#06b6d4',    // Cyan 500
+                        sim: '#10b981',       // Emerald 500 (EduSim identity)
+                        simDeep: '#047857',   // Emerald 700
+                        surface: '#ffffff',
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%':      { 'background-size': '200% 200%', 'background-position': 'right center' },
+                        },
+                        shimmer: {
+                            '0%':   { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; border: 2px solid #f8fafc; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Premium Dot Grid Background */
+        .bg-dot-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        /* Connected Timeline Line */
+        .timeline-container { position: relative; }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            bottom: 2rem;
+            left: 1.25rem;
+            width: 2px;
+            background: linear-gradient(to bottom, #10b981 0%, #06b6d4 50%, #4f46e5 100%);
+            opacity: 0.35;
+            z-index: 0;
+        }
+
+        /* Checkbox animation */
+        .checkbox-custom:checked + div {
+            background-color: #10b981;
+            border-color: #10b981;
+            transform: scale(1.05);
+        }
+        .checkbox-custom:checked + div svg { display: block; }
+
+        /* Tier tab system */
+        .tier-tab { transition: all 0.25s ease; }
+        .tier-tab[aria-selected="true"] {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            color: white;
+            box-shadow: 0 10px 25px -8px rgba(16, 185, 129, 0.5);
+        }
+        .tier-panel { display: none; }
+        .tier-panel.is-active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Phase card hover */
+        .phase-card:hover .phase-number {
+            transform: scale(1.15) rotate(-6deg);
+        }
+
+        /* Pulse ring */
+        .pulse-ring {
+            position: relative;
+        }
+        .pulse-ring::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: inherit;
+            border: 2px solid rgba(16,185,129,0.5);
+            animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.25); opacity: 0; }
+        }
+
+        /* Code block */
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+            box-shadow: inset 0 2px 12px rgba(0,0,0,0.4);
+        }
+
+        /* Select dropdown styling */
+        select option {
+            background-color: #1e293b;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-dot-pattern text-slate-800 antialiased selection:bg-sim selection:text-white pb-20 overflow-x-hidden">
+
+    <!-- Sticky Navigation & Progress Bar -->
+    <nav class="fixed top-0 w-full bg-white/85 backdrop-blur-xl border-b border-slate-200/80 z-50 transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center space-x-3 group" title="Back to AI for Educators Hub">
+                <img src="AI_FOR_EDUCATORS_LOGO.jpeg" alt="AI for Educators Logo" class="h-12 w-auto rounded-xl shadow-sm mix-blend-multiply border border-slate-100 group-hover:shadow-md transition-shadow" onerror="this.style.display='none'">
+                <span class="font-heading font-extrabold text-2xl text-slate-900 hidden sm:block tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">AI for Educators</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="hidden md:inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-sim bg-white border border-slate-200 hover:border-sim/40 px-4 py-2.5 rounded-2xl shadow-sm hover:shadow transition-all" title="Back to AI for Educators Hub">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Back to Hub
+                </a>
+                <div class="flex items-center space-x-5 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-2xl shadow-inner">
+                    <span id="progress-text" class="text-sm font-bold text-slate-500 transition-colors duration-300 uppercase tracking-widest">0% Done</span>
+                    <div class="w-32 md:w-48 h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner relative">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-sim via-accent to-primary w-0 transition-all duration-700 ease-out relative">
+                            <div class="absolute inset-0 bg-white/20 w-full animate-shimmer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-40 pb-24 lg:pt-48 lg:pb-28 overflow-hidden">
+        <!-- Animated Background Effects -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-full pointer-events-none opacity-70">
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-sim/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob"></div>
+            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-accent/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-6 text-center relative z-10">
+            <div class="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-5 py-2 mb-8 shadow-sm hover:shadow-md transition-shadow">
+                <span class="flex h-2.5 w-2.5 rounded-full bg-sim shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></span>
+                <span class="text-sm font-semibold text-slate-700 tracking-wide uppercase">EduSim Engine V5.1 · Free Gemini Gem</span>
+            </div>
+            <h1 class="font-heading text-5xl lg:text-[5.25rem] font-black text-slate-900 tracking-normal leading-[1.05] mb-8 drop-shadow-sm">
+                Launch Adaptive <br class="hidden lg:block"/>
+                Science Simulations
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-sim via-accent to-primary animate-gradient-x pb-2">in Under 5 Minutes.</span>
+            </h1>
+            <p class="text-lg lg:text-2xl text-slate-600 mb-10 max-w-3xl mx-auto leading-relaxed font-medium">
+                A free, classroom-ready Gemini Gem that generates fully-playable, tiered, standards-aligned simulations with <strong class="text-slate-800">theory modules, hypothesis setup, real-time state machines, and level-specific assessments</strong> — all in a single HTML file.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+                <a href="https://gemini.google.com/gem/11QD4AkTJjpXVgEGw8SJ74nq99ntDfv8V?usp=sharing" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-300 bg-gradient-to-r from-sim to-accent border border-emerald-400/50 rounded-full hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:-translate-y-1 group">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Get the Free Gem
+                    <svg class="w-5 h-5 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+                <a href="#course-content" class="inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-slate-700 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-full hover:border-sim/40 hover:text-sim transition-all">
+                    Take the Masterclass
+                </a>
+            </div>
+            <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest">Free · No Account Required · Built for IB · NGSS · UAE MOE</p>
+        </div>
+    </header>
+
+    <!-- Gem Showcase Card -->
+    <section class="max-w-6xl mx-auto px-6 relative">
+        <div class="relative bg-slate-900 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)] overflow-hidden border border-slate-800">
+            <!-- Ambient glow -->
+            <div class="absolute -top-20 -right-20 w-80 h-80 bg-sim/30 rounded-full blur-[100px] opacity-60"></div>
+            <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-accent/30 rounded-full blur-[100px] opacity-60"></div>
+            <!-- Grid accent -->
+            <div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px); background-size: 32px 32px;"></div>
+
+            <div class="relative z-10 grid lg:grid-cols-5 gap-10 items-center">
+                <div class="lg:col-span-3">
+                    <div class="inline-flex items-center gap-2 bg-sim/10 border border-sim/30 text-sim rounded-full px-4 py-1.5 mb-5 backdrop-blur-sm">
+                        <span class="flex h-2 w-2 rounded-full bg-sim animate-pulse"></span>
+                        <span class="text-xs font-black tracking-widest uppercase">100% Free · Powered by Gemini</span>
+                    </div>
+                    <h2 class="font-heading text-4xl lg:text-5xl font-black text-white tracking-tight mb-5 leading-tight">
+                        EduSim Engine <span class="text-transparent bg-clip-text bg-gradient-to-r from-sim to-accent">V5.1</span>
+                    </h2>
+                    <p class="text-slate-300 text-lg leading-relaxed mb-8 font-medium">
+                        Give any topic to the Gem — it returns a single <code class="text-sim font-mono text-base bg-slate-800 px-2 py-0.5 rounded">index.html</code> file containing a complete, responsive digital classroom with theory, simulation, assessment, and scoring. No frameworks, no dependencies, no setup.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <a href="https://gemini.google.com/gem/11QD4AkTJjpXVgEGw8SJ74nq99ntDfv8V?usp=sharing" target="_blank" rel="noopener" class="inline-flex items-center gap-2.5 bg-white text-slate-900 font-bold px-7 py-3.5 rounded-xl hover:bg-sim hover:text-white transition-all shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:-translate-y-0.5">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            Open the Gem in Gemini
+                        </a>
+                        <button onclick="copyShareLink()" id="share-btn" class="inline-flex items-center gap-2 bg-slate-800 text-slate-200 font-bold px-5 py-3.5 rounded-xl hover:bg-slate-700 border border-slate-700 transition-all">
+                            <svg id="share-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-2.684-4.026m2.684 4.026l-9.032-5.368m9.032-1.342l-9.032 5.368"></path></svg>
+                            <span id="share-text">Copy Share Link</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mini stats card -->
+                <div class="lg:col-span-2 grid grid-cols-2 gap-3">
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                        <div class="text-3xl font-black text-sim font-heading">6</div>
+                        <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">Pedagogical Phases</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                        <div class="text-3xl font-black text-accent font-heading">3</div>
+                        <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">Tier Levels</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                        <div class="text-3xl font-black text-primary font-heading">2</div>
+                        <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">Languages (EN/AR)</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                        <div class="text-3xl font-black text-amber-400 font-heading">1</div>
+                        <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">HTML Output File</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Course Content -->
+    <section id="course-content" class="max-w-7xl mx-auto px-6 relative space-y-24 lg:space-y-32 mt-28 lg:mt-36">
+
+        <!-- Module 1: What is EduSim? -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sim to-transparent rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-emerald-50 text-sim rounded-xl flex items-center justify-center font-black text-lg border border-emerald-100 shadow-sm">1</div>
+                        <span class="text-sim font-bold tracking-widest uppercase text-sm">The Foundation</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 5 Min Read</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">What is EduSim V5.1?</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-12 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-emerald-200 pl-6">
+                EduSim is not a chatbot — it's an <strong class="text-slate-900">AI development team</strong> that produces a complete, state-driven web app every time you give it a topic. Imagine handing a Subject Matter Expert, Learning Designer, Simulation Architect, UI Engineer, and UAE Cultural Consultant the same mission brief — then getting one finished HTML file back.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 border border-emerald-100 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-sim text-white flex items-center justify-center shadow-lg shadow-emerald-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">Standards-Aligned</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Every simulation is mapped to NGSS and IB PYP/MYP expectations — no generic "science vibes."</p>
+                </div>
+                <div class="bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-6 border border-cyan-100 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-accent text-white flex items-center justify-center shadow-lg shadow-cyan-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">Dual-Language TTS</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Built-in Arabic + English text-to-speech with granular word highlighting for accessibility.</p>
+                </div>
+                <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-indigo-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">State-Driven Engine</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Real variables, timers, and resource flows — students <em>run</em> experiments, they don't just read them.</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 border border-amber-100 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">Tiered Differentiation</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">L1 / L2 / L3 content and assessments baked in — reach every learner in the same classroom.</p>
+                </div>
+                <div class="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-6 border border-rose-100 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">UAE Context Built-In</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Hope Probe, Expo City, falaj irrigation, local biodiversity — relevance your students can see.</p>
+                </div>
+                <div class="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-200 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    </div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2">One HTML File</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Vanilla JS + Tailwind via CDN. Save, email, host anywhere — no build, no npm, no headaches.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 2: The 6-Phase Pedagogical Loop -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-accent to-transparent rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-cyan-50 text-accent rounded-xl flex items-center justify-center font-black text-lg border border-cyan-100 shadow-sm">2</div>
+                        <span class="text-accent font-bold tracking-widest uppercase text-sm">The Architecture</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 6 Min Read</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">The 6-Phase Pedagogical Loop</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-12 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-cyan-200 pl-6">
+                Every EduSim output follows the same strict progression — this is what separates a real learning experience from a flashy demo. The Gem enforces it for you.
+            </p>
+
+            <!-- Phase Flow Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Phase 1 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">01</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-sim to-emerald-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Main Menu</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">"Mission Dashboard" launches with two pathways: <em class="not-italic font-bold text-sim">Learn the Theory</em> or <em class="not-italic font-bold text-sim">Enter the Simulation</em>.</p>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">02</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-cyan-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-cyan-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Tiered Theory</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">Interactive Field Guide with <strong>L1 / L2 / L3</strong> toggles + dual-language TTS for accessibility.</p>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">03</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-indigo-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Hypothesis Setup</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">Simulation starts <strong class="text-primary">paused</strong>. Students predict outcomes and set variables <em class="not-italic font-bold">before</em> hitting Initiate.</p>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">04</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-amber-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Active Simulation</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">JavaScript state machine runs — resources drain, meters fill, visuals react in real time until win/loss.</p>
+                </div>
+
+                <!-- Phase 5 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">05</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-rose-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Level-Specific CFU</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">Check-For-Understanding questions are <strong>unique to the tier</strong> — DOK 1 → DOK 3/4 as rigor scales.</p>
+                </div>
+
+                <!-- Phase 6 -->
+                <div class="phase-card bg-gradient-to-br from-slate-50 to-white rounded-2xl p-7 border border-slate-200 hover:border-sim/40 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 text-[4rem] font-heading font-black text-slate-100 leading-none select-none">06</div>
+                    <div class="phase-number relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-purple-200 mb-5 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    </div>
+                    <h4 class="relative font-heading text-xl font-black text-slate-900 mb-2">Score &amp; Replay</h4>
+                    <p class="relative text-slate-600 text-sm leading-relaxed font-medium">Mission Complete screen combines simulation efficiency + CFU score. Play Again, Advance, or Return to Menu.</p>
+                </div>
+            </div>
+
+            <!-- Persistent Nav Call-out -->
+            <div class="mt-10 bg-gradient-to-r from-emerald-50 via-cyan-50 to-indigo-50 border border-emerald-200/60 rounded-2xl p-6 flex items-start gap-5">
+                <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-white border-2 border-emerald-300 text-sim flex items-center justify-center shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </div>
+                <div>
+                    <div class="text-xs font-black uppercase tracking-widest text-sim mb-1">Global UI Constraint</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-1.5">A "Return to Main Menu" button is always visible.</h5>
+                    <p class="text-slate-600 text-sm font-medium leading-relaxed">Students never get locked into a screen — they can always review theory, re-attempt a tier, or change levels without reloading the app.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 3: The Multidisciplinary Team -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-transparent rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-indigo-50 text-primary rounded-xl flex items-center justify-center font-black text-lg border border-indigo-100 shadow-sm">3</div>
+                        <span class="text-primary font-bold tracking-widest uppercase text-sm">Behind the Scenes</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 4 Min Read</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">Meet Your Multidisciplinary Team</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-12 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-indigo-200 pl-6">
+                One prompt, five specialists. The Gem synthesizes the expertise of an entire EdTech studio on every generation — so the output is rigorous, accessible, culturally relevant, and technically clean.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- SME -->
+                <div class="bg-gradient-to-br from-emerald-50 via-white to-white rounded-2xl p-7 border border-emerald-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-sim/10 rounded-full blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-sim text-white flex items-center justify-center shadow-lg shadow-emerald-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-sim bg-sim/10 px-2 py-1 rounded-md">Expert 01</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-slate-900 mb-2">Subject Matter Expert</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">Generates rigorous, engaging content mapped to US NGSS and IB PYP/MYP standards — no hallucinated science.</p>
+                    </div>
+                </div>
+
+                <!-- Learning Design -->
+                <div class="bg-gradient-to-br from-cyan-50 via-white to-white rounded-2xl p-7 border border-cyan-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-accent text-white flex items-center justify-center shadow-lg shadow-cyan-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-accent bg-accent/10 px-2 py-1 rounded-md">Expert 02</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-slate-900 mb-2">Learning Design Expert</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">Constructs the adaptive L1 → L2 → L3 scaffolding so struggling and advanced learners both find challenge.</p>
+                    </div>
+                </div>
+
+                <!-- Simulation Architect -->
+                <div class="bg-gradient-to-br from-indigo-50 via-white to-white rounded-2xl p-7 border border-indigo-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-indigo-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">Expert 03</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-slate-900 mb-2">Simulation Architect</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">Designs the state machine — variables, time steps, tolerances, win/loss conditions. Real physics, real math.</p>
+                    </div>
+                </div>
+
+                <!-- Web & UI -->
+                <div class="bg-gradient-to-br from-amber-50 via-white to-white rounded-2xl p-7 border border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-amber-600 bg-amber-100 px-2 py-1 rounded-md">Expert 04</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-slate-900 mb-2">Web &amp; UI Design Expert</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">Clean HTML / Tailwind / Vanilla JS. Responsive, accessible, beautiful — ready for any classroom screen.</p>
+                    </div>
+                </div>
+
+                <!-- UAE Cultural Consultant -->
+                <div class="bg-gradient-to-br from-rose-50 via-white to-white rounded-2xl p-7 border border-rose-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-rose-400/20 rounded-full blur-2xl"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-rose-600 bg-rose-100 px-2 py-1 rounded-md">Expert 05</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-slate-900 mb-2">UAE Cultural Consultant</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">Weaves Expo City, Hope Probe, falaj irrigation, and local biodiversity directly into the mechanics and story.</p>
+                    </div>
+                </div>
+
+                <!-- You -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-7 border border-slate-700 relative overflow-hidden group/you">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-sim/20 rounded-full blur-3xl group-hover/you:bg-sim/40 transition-colors"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-white text-slate-900 flex items-center justify-center shadow-lg pulse-ring">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-sim bg-sim/20 border border-sim/30 px-2 py-1 rounded-md">The Director</span>
+                        </div>
+                        <h4 class="font-heading text-xl font-black text-white mb-2">You — The Teacher</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed font-medium">Your one job: give the Gem a topic. The team handles curriculum mapping, engine design, CFUs, and code.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 4: Tiered Scaffolding -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-400 to-transparent rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center font-black text-lg border border-amber-100 shadow-sm">4</div>
+                        <span class="text-amber-600 font-bold tracking-widest uppercase text-sm">Differentiation</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 5 Min Read · Interactive</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">Tiered Scaffolding: L1 / L2 / L3</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-10 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-amber-200 pl-6">
+                The same topic, rendered three ways. Tap a tier below to see how theory, variables, and assessment scale to match the learner.
+            </p>
+
+            <!-- Tier Tabs -->
+            <div role="tablist" class="flex flex-wrap gap-3 mb-8 bg-slate-50 p-2 rounded-2xl border border-slate-200 w-fit">
+                <button role="tab" aria-selected="true" aria-controls="tier-panel-1" data-tier="1" onclick="switchTier(1)" class="tier-tab text-sm font-bold px-6 py-3 rounded-xl bg-white text-slate-700 border border-slate-200 hover:border-sim/40">
+                    <span class="inline-flex items-center gap-2">
+                        <span class="font-black">L1</span>
+                        <span class="text-xs opacity-80">Foundational</span>
+                    </span>
+                </button>
+                <button role="tab" aria-selected="false" aria-controls="tier-panel-2" data-tier="2" onclick="switchTier(2)" class="tier-tab text-sm font-bold px-6 py-3 rounded-xl bg-white text-slate-700 border border-slate-200 hover:border-sim/40">
+                    <span class="inline-flex items-center gap-2">
+                        <span class="font-black">L2</span>
+                        <span class="text-xs opacity-80">On Grade-Level</span>
+                    </span>
+                </button>
+                <button role="tab" aria-selected="false" aria-controls="tier-panel-3" data-tier="3" onclick="switchTier(3)" class="tier-tab text-sm font-bold px-6 py-3 rounded-xl bg-white text-slate-700 border border-slate-200 hover:border-sim/40">
+                    <span class="inline-flex items-center gap-2">
+                        <span class="font-black">L3</span>
+                        <span class="text-xs opacity-80">Advanced Synthesis</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- L1 Panel -->
+            <div id="tier-panel-1" role="tabpanel" class="tier-panel is-active">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-emerald-50/60 rounded-2xl p-6 border border-emerald-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-sim mb-2">Theory Style</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">Heavy Visuals · Short Sentences</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Emojis, color-coded CSS diagrams, and foundational vocabulary. Example: <em class="not-italic font-bold">"🌱 Plants need ☀️ sun + 💧 water to grow!"</em></p>
+                    </div>
+                    <div class="bg-emerald-50/60 rounded-2xl p-6 border border-emerald-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-sim mb-2">Simulation</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">2 Variables · Wide Tolerance</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Fewer knobs, more forgiving sweet-spots. The student can still "win" while building confidence with the mechanics.</p>
+                    </div>
+                    <div class="bg-emerald-50/60 rounded-2xl p-6 border border-emerald-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-sim mb-2">Assessment</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">3 Questions · DOK 1</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Identify variables, basic recall. Instant feedback reinforces correct mental models right away.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- L2 Panel -->
+            <div id="tier-panel-2" role="tabpanel" class="tier-panel">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-cyan-50/60 rounded-2xl p-6 border border-cyan-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-accent mb-2">Theory Style</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">Standard Curriculum Depth</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Clear scientific definitions, standard processes, real-world UAE application. Aligned to IB/NGSS grade expectations.</p>
+                    </div>
+                    <div class="bg-cyan-50/60 rounded-2xl p-6 border border-cyan-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-accent mb-2">Simulation</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">3–4 Variables · Balanced</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Realistic interdependencies — change one variable and watch the cascade. Hypothesis-driven play.</p>
+                    </div>
+                    <div class="bg-cyan-50/60 rounded-2xl p-6 border border-cyan-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-accent mb-2">Assessment</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">3–4 Questions · DOK 2</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">"How did X affect Y?" — focuses on variable interaction and cause-and-effect reasoning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- L3 Panel -->
+            <div id="tier-panel-3" role="tabpanel" class="tier-panel">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-indigo-50/60 rounded-2xl p-6 border border-indigo-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-primary mb-2">Theory Style</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">Deep-Dive Scientific Literacy</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Formulas, chemical/physical nuance, system-level impact analysis. Prepares for IB MYP eAssessment rigor.</p>
+                    </div>
+                    <div class="bg-indigo-50/60 rounded-2xl p-6 border border-indigo-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-primary mb-2">Simulation</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">5+ Variables · Narrow Tolerance</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Interlocking systems, tight sweet-spots. Students must synthesize theory before they can succeed.</p>
+                    </div>
+                    <div class="bg-indigo-50/60 rounded-2xl p-6 border border-indigo-200/60">
+                        <div class="text-xs font-black uppercase tracking-widest text-primary mb-2">Assessment</div>
+                        <h5 class="font-heading font-black text-slate-900 text-lg mb-3">4–5 Questions · DOK 3/4</h5>
+                        <p class="text-slate-700 text-sm leading-relaxed">Evaluate outcomes, synthesize real-world implications, propose alternative designs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 5: UAE Cultural Integration -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-rose-400 to-transparent rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center font-black text-lg border border-rose-100 shadow-sm">5</div>
+                        <span class="text-rose-600 font-bold tracking-widest uppercase text-sm">Cultural Relevance</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 3 Min Read</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">UAE Context Woven Into Every Simulation</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-10 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-rose-200 pl-6">
+                Real science, <em>your</em> students' world. The Cultural Consultant role in the Gem ensures these aren't token mentions — they become the storyline, the data, and the mission.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-6 border border-rose-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🛰️</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Hope Probe</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Mars atmosphere, orbital mechanics, satellite power budgets — turned into playable engineering challenges.</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 border border-amber-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🏙️</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Expo City Dubai</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Sustainability, solar harvest, water reuse, smart transport systems — design the pavilion of the future.</p>
+                </div>
+                <div class="bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-6 border border-cyan-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">💧</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Falaj Irrigation</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Gravity, flow rates, porous rock — ancient Emirati engineering meets modern fluid dynamics.</p>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🐢</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Local Biodiversity</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Hawksbill turtles, Arabian oryx, mangroves — ecosystem simulations students actually recognize.</p>
+                </div>
+                <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-6 border border-orange-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">☀️</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Climate &amp; Heat</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Desert thermal extremes, humidity, urban heat island — authentic UAE physics challenges.</p>
+                </div>
+                <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🕌</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Islamic Values</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Every output respects cultural norms and vocabulary — safe to share across MOE, IB, and private schools.</p>
+                </div>
+                <div class="bg-gradient-to-br from-teal-50 to-white rounded-2xl p-6 border border-teal-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🗣️</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">Bilingual TTS</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">English + Arabic narration with word-by-word highlighting for ELLs and Arabic-medium sections.</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border border-purple-100 hover:shadow-lg transition-all relative overflow-hidden">
+                    <div class="text-5xl mb-3">🏛️</div>
+                    <h5 class="font-heading font-black text-slate-900 text-lg mb-2">MOE Alignment</h5>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">UAE Ministry of Education frameworks are a first-class citizen alongside US NGSS and IB standards.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 6: How to Launch -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sim via-accent to-primary rounded-t-[2.5rem] opacity-70"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 flex-wrap">
+                        <div class="w-10 h-10 bg-emerald-50 text-sim rounded-xl flex items-center justify-center font-black text-lg border border-emerald-100 shadow-sm">6</div>
+                        <span class="text-sim font-bold tracking-widest uppercase text-sm">Your First Launch</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">⏱️ 5 Min Hands-On</span>
+                    </div>
+                    <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight">From Topic to Classroom in 5 Minutes</h2>
+                </div>
+                <label class="cursor-pointer flex items-center gap-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-5 py-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow">
+                    <span class="text-sm font-bold text-slate-600">Mark Complete</span>
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                        <div class="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white flex items-center justify-center transition-all duration-300 shadow-inner">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-slate-600 mb-12 text-[1.2rem] leading-relaxed max-w-4xl font-medium tracking-tight border-l-4 border-emerald-200 pl-6">
+                Six steps, zero technical setup. By the end of this module, you'll have a live simulation running on any student device with a browser.
+            </p>
+
+            <div class="grid lg:grid-cols-2 gap-10 items-start">
+                <!-- Steps -->
+                <div class="bg-slate-50/50 rounded-[2rem] p-6 lg:p-10 border border-slate-200/60 shadow-inner">
+                    <h4 class="font-heading font-black text-slate-900 mb-8 flex items-center text-2xl tracking-tight">
+                        <span class="bg-gradient-to-r from-sim to-accent text-transparent bg-clip-text">Step-by-Step Launch</span>
+                    </h4>
+                    <div class="space-y-8 timeline-container">
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">1</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <strong class="text-slate-900">Open the Gem</strong> using the link above. Sign in with any Google account — no payment, no subscription.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">2</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <strong class="text-slate-900">Type your topic</strong> — as specific as possible. Grade level, subject, and any UAE context you want foregrounded.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">3</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <strong class="text-slate-900">Let the Gem generate.</strong> It will output a single ````html` code block — typically 1,500–3,000 lines.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">4</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2 w-full">
+                                <strong class="text-slate-900 block mb-3">Save as <code class="bg-slate-200 text-slate-800 px-2 py-0.5 rounded text-sm font-mono">index.html</code></strong>
+                                Copy the code → paste into any text editor (Notepad, TextEdit) → save with the <code class="bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded text-xs font-mono">.html</code> extension.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">5</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <strong class="text-slate-900">Double-click the file.</strong> It opens in any browser. That's it — the simulation is live.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white text-sim flex items-center justify-center font-black text-lg border-2 border-sim shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform mt-1">6</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <strong class="text-slate-900">Share with students</strong> via Google Classroom, email, or host free on GitHub Pages / Netlify Drop.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5 relative z-10 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-400 text-amber-900 flex items-center justify-center font-black text-xl border-2 border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.4)] group-hover:scale-110 transition-transform mt-1">💡</div>
+                            <div class="leading-relaxed text-slate-700 text-[1.1rem] pt-2">
+                                <span class="font-black text-amber-600 tracking-wider uppercase text-sm block mb-1">Pro-Tip</span>
+                                Use the Sandbox below to assemble your topic brief — it writes a polished launch message for you. Copy, paste into the Gem, done.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example output visualization -->
+                <div class="lg:sticky lg:top-32 space-y-5">
+                    <div class="bg-slate-900 rounded-[2rem] p-6 shadow-2xl border border-slate-800 relative overflow-hidden">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                            <span class="text-xs font-mono text-slate-400 ml-3">index.html</span>
+                        </div>
+                        <div class="code-block text-xs">
+<span class="text-slate-500">&lt;!-- Output by EduSim V5.1 --&gt;</span>
+<span class="text-pink-400">&lt;!DOCTYPE</span> <span class="text-cyan-300">html</span><span class="text-pink-400">&gt;</span>
+<span class="text-pink-400">&lt;html</span> <span class="text-cyan-300">lang</span>=<span class="text-emerald-300">"en"</span><span class="text-pink-400">&gt;</span>
+  <span class="text-pink-400">&lt;head&gt;</span>
+    <span class="text-pink-400">&lt;title&gt;</span><span class="text-slate-200">Photosynthesis Sim</span><span class="text-pink-400">&lt;/title&gt;</span>
+    <span class="text-slate-500">&lt;!-- Tailwind + FontAwesome --&gt;</span>
+  <span class="text-pink-400">&lt;/head&gt;</span>
+  <span class="text-pink-400">&lt;body&gt;</span>
+    <span class="text-slate-500">&lt;!-- Phase 1–6 rendered --&gt;</span>
+    <span class="text-pink-400">&lt;script&gt;</span>
+      <span class="text-cyan-300">let</span> <span class="text-amber-300">simState</span> = {
+        <span class="text-emerald-300">sunlight</span>: <span class="text-orange-300">50</span>,
+        <span class="text-emerald-300">water</span>:    <span class="text-orange-300">50</span>,
+        <span class="text-emerald-300">co2</span>:      <span class="text-orange-300">400</span>,
+        <span class="text-emerald-300">glucose</span>:  <span class="text-orange-300">0</span>,
+      };
+    <span class="text-pink-400">&lt;/script&gt;</span>
+  <span class="text-pink-400">&lt;/body&gt;</span>
+<span class="text-pink-400">&lt;/html&gt;</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-sim mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            <p class="text-sm text-slate-600 leading-relaxed font-medium">Every output includes a proper state machine, phase transitions, and assessment logic — no skeleton demos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <div id="sandbox" class="bg-slate-900 rounded-[2.5rem] p-6 lg:p-12 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)] border border-slate-800 relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-80 h-80 bg-sim/30 rounded-full blur-[100px] opacity-60"></div>
+            <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-accent/30 rounded-full blur-[100px] opacity-60"></div>
+
+            <div class="relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3 flex-wrap">
+                            <span class="bg-sim/20 text-sim border border-sim/30 text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-lg">Interactive</span>
+                            <span class="text-sim font-bold tracking-widest uppercase text-sm">Topic Launcher Sandbox</span>
+                        </div>
+                        <h2 class="text-4xl font-heading font-black text-white tracking-tight">Draft Your First Brief</h2>
+                        <p class="text-slate-400 mt-3 font-medium">Fill the fields — we'll generate a polished message you can paste straight into the Gem.</p>
+                    </div>
+                    <label class="cursor-pointer flex items-center gap-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-5 py-3 rounded-2xl transition-all duration-300">
+                        <span class="text-sm font-bold text-slate-300">Mark Complete</span>
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only checkbox-custom module-checkbox" onchange="updateProgress()">
+                            <div class="w-7 h-7 rounded-xl border-2 border-slate-600 bg-slate-900 flex items-center justify-center transition-all duration-300">
+                                <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Input Form -->
+                    <div class="space-y-5">
+                        <div>
+                            <label for="sim-topic" class="block text-xs font-black uppercase tracking-widest text-sim mb-2">Topic / Phenomenon</label>
+                            <input id="sim-topic" type="text" placeholder="e.g. Photosynthesis in desert plants" value="Photosynthesis in desert plants" oninput="generateBrief()" class="w-full bg-slate-800 text-white border border-slate-700 focus:border-sim focus:ring-2 focus:ring-sim/40 rounded-xl px-5 py-3.5 outline-none font-medium placeholder:text-slate-500 transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="sim-grade" class="block text-xs font-black uppercase tracking-widest text-sim mb-2">Grade Band</label>
+                                <select id="sim-grade" onchange="generateBrief()" class="w-full bg-slate-800 text-white border border-slate-700 focus:border-sim focus:ring-2 focus:ring-sim/40 rounded-xl px-5 py-3.5 outline-none font-medium transition-all">
+                                    <option>Grade 3–5 (Elementary)</option>
+                                    <option selected>Grade 6–8 (Middle / MYP 1–3)</option>
+                                    <option>Grade 9–10 (MYP 4–5)</option>
+                                    <option>Grade 11–12 (IB DP / AP)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sim-standard" class="block text-xs font-black uppercase tracking-widest text-sim mb-2">Standard</label>
+                                <select id="sim-standard" onchange="generateBrief()" class="w-full bg-slate-800 text-white border border-slate-700 focus:border-sim focus:ring-2 focus:ring-sim/40 rounded-xl px-5 py-3.5 outline-none font-medium transition-all">
+                                    <option>US NGSS</option>
+                                    <option>IB PYP</option>
+                                    <option selected>IB MYP</option>
+                                    <option>IB DP</option>
+                                    <option>UAE MOE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="sim-uae" class="block text-xs font-black uppercase tracking-widest text-sim mb-2">UAE Context Anchor</label>
+                            <select id="sim-uae" onchange="generateBrief()" class="w-full bg-slate-800 text-white border border-slate-700 focus:border-sim focus:ring-2 focus:ring-sim/40 rounded-xl px-5 py-3.5 outline-none font-medium transition-all">
+                                <option>Expo City Dubai sustainability pavilion</option>
+                                <option selected>Ghaf tree survival in the Arabian desert</option>
+                                <option>Hope Probe Mars mission</option>
+                                <option>Falaj irrigation in the Hajar mountains</option>
+                                <option>Hawksbill turtle nesting on Sir Bu Nair</option>
+                                <option>Arabian oryx reintroduction</option>
+                                <option>Masdar City solar microgrid</option>
+                                <option>None — keep it generic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sim-extra" class="block text-xs font-black uppercase tracking-widest text-sim mb-2">Additional Constraints <span class="text-slate-500 font-normal normal-case tracking-normal">(optional)</span></label>
+                            <textarea id="sim-extra" rows="2" placeholder="e.g. Must work on school Chromebooks, no external APIs" oninput="generateBrief()" class="w-full bg-slate-800 text-white border border-slate-700 focus:border-sim focus:ring-2 focus:ring-sim/40 rounded-xl px-5 py-3.5 outline-none font-medium placeholder:text-slate-500 transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-400">Generated Launch Brief</span>
+                            <span class="text-xs font-mono text-sim bg-sim/10 border border-sim/30 px-2 py-1 rounded-md">Ready to Paste</span>
+                        </div>
+                        <div class="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-inner flex-1 relative overflow-hidden min-h-[22rem]">
+                            <div class="absolute top-3 right-3 flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/70"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400/70"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/70"></span>
+                            </div>
+                            <pre id="generated-brief" class="text-slate-200 text-[0.92rem] leading-relaxed font-mono whitespace-pre-wrap mt-6"></pre>
+                        </div>
+                        <div class="flex items-center gap-3 mt-4">
+                            <button id="copy-btn" onclick="copyBrief()" class="flex-1 inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-sim to-accent text-white font-bold px-6 py-4 rounded-xl hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 transition-all shadow-lg">
+                                <svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                <span id="copy-text">Copy Brief</span>
+                            </button>
+                            <a href="https://gemini.google.com/gem/11QD4AkTJjpXVgEGw8SJ74nq99ntDfv8V?usp=sharing" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-slate-800 text-white font-bold px-5 py-4 rounded-xl border border-slate-700 hover:bg-slate-700 transition-all">
+                                Open Gem
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Topics Gallery -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-accent via-sim to-primary rounded-t-[2.5rem] opacity-60"></div>
+
+            <div class="mb-10">
+                <span class="text-accent font-bold tracking-widest uppercase text-sm">Ready-to-Try Missions</span>
+                <h2 class="text-4xl font-heading font-black text-slate-900 tracking-tight mt-2">9 Topics to Launch Today</h2>
+                <p class="text-slate-600 mt-3 max-w-3xl text-lg font-medium">Tap any card — it fills the sandbox above with the full brief, ready to copy into the Gem.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <button onclick="fillTopic('Photosynthesis in desert plants', 'Grade 6–8 (Middle / MYP 1–3)', 'IB MYP', 'Ghaf tree survival in the Arabian desert')" class="text-left bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 border border-emerald-100 hover:border-sim/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🌱</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-sim transition-colors">Ghaf Tree Survival</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Photosynthesis under water stress. Variables: sunlight, water, CO₂, root depth.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-sim">MYP 1–3 · Biology</span>
+                </button>
+
+                <button onclick="fillTopic('Mars atmosphere entry', 'Grade 9–10 (MYP 4–5)', 'IB MYP', 'Hope Probe Mars mission')" class="text-left bg-gradient-to-br from-rose-50 to-white rounded-2xl p-6 border border-rose-100 hover:border-rose-400/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🛰️</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-rose-600 transition-colors">Hope Probe Orbit</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Gravity, velocity, fuel budget. Design the insertion burn without losing the probe.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-rose-600">MYP 4–5 · Physics</span>
+                </button>
+
+                <button onclick="fillTopic('Water flow through falaj channels', 'Grade 3–5 (Elementary)', 'UAE MOE', 'Falaj irrigation in the Hajar mountains')" class="text-left bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-6 border border-cyan-100 hover:border-accent/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">💧</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-accent transition-colors">Falaj Engineering</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Gradient, flow rate, porosity. Route water across a village without losing it.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-accent">G 3–5 · Earth Science</span>
+                </button>
+
+                <button onclick="fillTopic('Solar panel angle and efficiency', 'Grade 9–10 (MYP 4–5)', 'US NGSS', 'Masdar City solar microgrid')" class="text-left bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 border border-amber-100 hover:border-amber-500/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">☀️</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">Masdar Microgrid</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Tilt, irradiance, temperature. Maximize kWh output over a simulated UAE day.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-amber-600">MYP 4–5 · Physics</span>
+                </button>
+
+                <button onclick="fillTopic('Hawksbill turtle nesting survival', 'Grade 6–8 (Middle / MYP 1–3)', 'IB MYP', 'Hawksbill turtle nesting on Sir Bu Nair')" class="text-left bg-gradient-to-br from-teal-50 to-white rounded-2xl p-6 border border-teal-100 hover:border-teal-500/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🐢</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">Turtle Nesting</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Temperature-dependent sex determination, predation, tide. Save the population.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-teal-600">MYP 1–3 · Ecology</span>
+                </button>
+
+                <button onclick="fillTopic('Chemical reaction rates', 'Grade 11–12 (IB DP / AP)', 'IB DP', 'None — keep it generic')" class="text-left bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border border-purple-100 hover:border-purple-500/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">⚗️</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-purple-600 transition-colors">Reaction Kinetics</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Temperature, concentration, catalyst. Hit a target product yield under time limit.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-purple-600">DP · Chemistry</span>
+                </button>
+
+                <button onclick="fillTopic('Food web energy transfer', 'Grade 3–5 (Elementary)', 'US NGSS', 'Arabian oryx reintroduction')" class="text-left bg-gradient-to-br from-orange-50 to-white rounded-2xl p-6 border border-orange-100 hover:border-orange-500/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🦌</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">Oryx Ecosystem</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Producers, consumers, carrying capacity. Balance a reintroduced population.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-orange-600">G 3–5 · Biology</span>
+                </button>
+
+                <button onclick="fillTopic('Sustainable building thermal design', 'Grade 9–10 (MYP 4–5)', 'IB MYP', 'Expo City Dubai sustainability pavilion')" class="text-left bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100 hover:border-primary/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🏙️</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-primary transition-colors">Expo Pavilion Design</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Insulation, shading, HVAC load. Keep the pavilion cool on a 45°C day.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-primary">MYP 4–5 · Engineering</span>
+                </button>
+
+                <button onclick="fillTopic('Newton&apos;s laws and motion', 'Grade 6–8 (Middle / MYP 1–3)', 'IB MYP', 'None — keep it generic')" class="text-left bg-gradient-to-br from-slate-100 to-white rounded-2xl p-6 border border-slate-200 hover:border-slate-500/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
+                    <div class="text-4xl mb-3">🚀</div>
+                    <h4 class="font-heading text-lg font-black text-slate-900 mb-2 group-hover:text-slate-700 transition-colors">Rocket Launch</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium mb-3">Mass, thrust, gravity, drag. Reach orbit with a finite fuel budget.</p>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-700">MYP 1–3 · Physics</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="relative text-center py-8">
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-[32rem] h-[32rem] bg-sim/10 rounded-full blur-[100px]"></div>
+            </div>
+            <div class="relative">
+                <h2 class="text-4xl lg:text-6xl font-heading font-black text-slate-900 tracking-tight mb-6 leading-tight">
+                    Ready to <span class="text-transparent bg-clip-text bg-gradient-to-r from-sim to-accent">launch</span>?
+                </h2>
+                <p class="text-slate-600 text-lg lg:text-xl mb-10 max-w-2xl mx-auto font-medium">
+                    The Gem is free. Your next lesson is 5 minutes away.
+                </p>
+                <a href="https://gemini.google.com/gem/11QD4AkTJjpXVgEGw8SJ74nq99ntDfv8V?usp=sharing" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-300 bg-gradient-to-r from-sim to-accent border border-emerald-400/50 rounded-full hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:-translate-y-1 group">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Open EduSim V5.1 in Gemini
+                    <svg class="w-5 h-5 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-16 text-slate-500 text-sm border-t border-slate-200 mt-20 flex flex-col items-center justify-center bg-white relative z-10">
+        <img src="AI_FOR_EDUCATORS_LOGO.jpeg" alt="AI for Educators Logo" class="h-20 w-auto mb-6 rounded-xl mix-blend-multiply grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer shadow-sm border border-slate-100" onerror="this.style.display='none'">
+        <p class="font-medium text-base tracking-wide uppercase text-slate-400">Expertly crafted for educators. Transforming classrooms with AI.</p>
+    </footer>
+
+    <!-- Floating Contact Menu -->
+    <div class="fixed bottom-8 right-8 z-50 flex flex-col gap-4 items-end">
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-5 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-xl border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1.5 before:border-8 before:border-transparent before:border-l-slate-900">Connect on LinkedIn</span>
+            <a href="https://www.linkedin.com/in/brandon-a-baki-19a81735b/" target="_blank" class="w-14 h-14 bg-[#0077b5] text-white rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(0,119,181,0.3)] hover:-translate-y-1.5 hover:shadow-[0_12px_25px_rgba(0,119,181,0.5)] hover:bg-[#005e93] transition-all duration-300" title="Connect on LinkedIn">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+        </div>
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-5 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-xl border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1.5 before:border-8 before:border-transparent before:border-l-slate-900">Watch on YouTube</span>
+            <a href="https://www.youtube.com/@AIforEducators-AE/videos" target="_blank" class="w-14 h-14 bg-[#FF0000] text-white rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(255,0,0,0.3)] hover:-translate-y-1.5 hover:shadow-[0_12px_25px_rgba(255,0,0,0.5)] hover:bg-[#cc0000] transition-all duration-300" title="Watch on YouTube">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+        </div>
+        <div class="relative group flex items-center">
+            <span class="absolute right-full mr-5 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 whitespace-nowrap pointer-events-none shadow-xl border border-slate-700 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-right-1.5 before:border-8 before:border-transparent before:border-l-slate-900">Join WhatsApp Group</span>
+            <a href="https://chat.whatsapp.com/DSIG8n8bSliJRORaethdYl" target="_blank" class="w-14 h-14 bg-[#25D366] text-white rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(37,211,102,0.3)] hover:-translate-y-1.5 hover:shadow-[0_12px_25px_rgba(37,211,102,0.5)] hover:bg-[#1ebe57] transition-all duration-300" title="Join WhatsApp Group">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // --- Progress bar logic ---
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.module-checkbox');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const progress = (checked / checkboxes.length) * 100;
+            const bar = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            bar.style.width = `${progress}%`;
+            if (progress === 100) {
+                bar.classList.remove('from-sim', 'via-accent', 'to-primary');
+                bar.classList.add('bg-emerald-500');
+                text.innerHTML = '🎉 Masterclass Completed!';
+                text.classList.add('text-emerald-600');
+                text.classList.remove('text-slate-500');
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 200,
+                        spread: 100,
+                        origin: { y: 0.5 },
+                        colors: ['#10b981', '#06b6d4', '#4f46e5', '#f59e0b'],
+                        disableForReducedMotion: true
+                    });
+                }
+            } else {
+                bar.classList.add('from-sim', 'via-accent', 'to-primary');
+                bar.classList.remove('bg-emerald-500');
+                text.innerText = `${Math.round(progress)}% Done`;
+                text.classList.remove('text-emerald-600');
+                text.classList.add('text-slate-500');
+            }
+        }
+
+        // --- Tier tab switcher ---
+        function switchTier(n) {
+            document.querySelectorAll('.tier-tab').forEach(btn => {
+                const isActive = Number(btn.dataset.tier) === n;
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+            document.querySelectorAll('.tier-panel').forEach((panel, i) => {
+                panel.classList.toggle('is-active', i === n - 1);
+            });
+        }
+
+        // --- Sandbox brief generator ---
+        function generateBrief() {
+            const topic    = document.getElementById('sim-topic').value.trim() || '[your topic]';
+            const grade    = document.getElementById('sim-grade').value;
+            const standard = document.getElementById('sim-standard').value;
+            const uae      = document.getElementById('sim-uae').value;
+            const extra    = document.getElementById('sim-extra').value.trim();
+
+            let brief = `Build a complete EduSim V5.1 digital classroom on the following topic:\n\n`;
+            brief    += `TOPIC: ${topic}\n`;
+            brief    += `GRADE BAND: ${grade}\n`;
+            brief    += `STANDARDS ALIGNMENT: ${standard}\n`;
+            if (uae && !uae.startsWith('None')) {
+                brief += `UAE CULTURAL ANCHOR: ${uae}\n`;
+            }
+            if (extra) {
+                brief += `ADDITIONAL CONSTRAINTS: ${extra}\n`;
+            }
+            brief += `\nEnforce all 6 pedagogical phases (Main Menu → Tiered Theory → Hypothesis Setup → Active Simulation → Level-Specific CFU → Score & Replay). Include L1, L2, and L3 tiers with distinct variables, tolerances, and assessment banks. Ship one responsive index.html file.`;
+
+            document.getElementById('generated-brief').innerText = brief;
+        }
+
+        // --- Copy brief to clipboard ---
+        function copyBrief() {
+            const text = document.getElementById('generated-brief').innerText;
+            if (!text) return;
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'absolute';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                flashCopy('Copied!');
+            } catch (e) {
+                flashCopy('Copy Failed');
+            }
+        }
+        function flashCopy(label) {
+            const btn  = document.getElementById('copy-btn');
+            const txt  = document.getElementById('copy-text');
+            const orig = txt.innerText;
+            txt.innerText = label;
+            btn.classList.add('from-emerald-600', 'to-emerald-500');
+            setTimeout(() => {
+                txt.innerText = orig;
+                btn.classList.remove('from-emerald-600', 'to-emerald-500');
+            }, 2000);
+        }
+
+        // --- Share Gem link button ---
+        function copyShareLink() {
+            const link = 'https://gemini.google.com/gem/11QD4AkTJjpXVgEGw8SJ74nq99ntDfv8V?usp=sharing';
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = link;
+                ta.style.position = 'absolute';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                const t = document.getElementById('share-text');
+                const orig = t.innerText;
+                t.innerText = 'Link Copied!';
+                setTimeout(() => { t.innerText = orig; }, 2000);
+            } catch (e) {}
+        }
+
+        // --- Example-topic cards fill the sandbox + scroll to it ---
+        function fillTopic(topic, grade, standard, uae) {
+            document.getElementById('sim-topic').value    = topic;
+            setSelect('sim-grade',    grade);
+            setSelect('sim-standard', standard);
+            setSelect('sim-uae',      uae);
+            document.getElementById('sim-extra').value    = '';
+            generateBrief();
+            const sandbox = document.getElementById('sandbox');
+            sandbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            sandbox.classList.add('ring-4', 'ring-sim', 'ring-offset-4', 'ring-offset-slate-100');
+            setTimeout(() => {
+                sandbox.classList.remove('ring-4', 'ring-sim', 'ring-offset-4', 'ring-offset-slate-100');
+            }, 1200);
+        }
+        function setSelect(id, value) {
+            const el = document.getElementById(id);
+            for (const opt of el.options) {
+                if (opt.value === value || opt.text === value) {
+                    el.value = opt.value;
+                    return;
+                }
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', generateBrief);
+    </script>
+</body>
+</html>

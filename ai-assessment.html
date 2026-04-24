@@ -93,7 +93,7 @@
         }
         .checkbox-custom:checked + div svg { display: block; }
 
-        /* AIAS level tab system */
+        /* AIAS level tab system (inside Module 1) */
         .level-tab { transition: all 0.25s ease; }
         .level-tab[aria-selected="true"] {
             background: linear-gradient(135deg, #c026d3 0%, #e11d48 100%);
@@ -105,6 +105,27 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Module tab system (top-level navigation) */
+        .module-tab {
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .module-tab[aria-selected="true"] {
+            background: linear-gradient(135deg, #c026d3 0%, #e11d48 50%, #f59e0b 100%);
+            color: white;
+            box-shadow: 0 8px 20px -6px rgba(192, 38, 211, 0.45);
+            transform: translateY(-1px);
+        }
+        .module-panel { display: none; }
+        .module-panel.is-active { display: block; animation: fadeIn 0.35s ease; }
+
+        /* Sticky tab strip — sits just below the top nav */
+        .module-tabs-bar {
+            position: sticky;
+            top: 5rem;
+            z-index: 40;
         }
 
         /* Traffic light cards */
@@ -205,12 +226,42 @@
     </section>
 
     <!-- Main Course Content -->
-    <section id="course-content" class="max-w-7xl mx-auto px-6 relative space-y-24 lg:space-y-32">
+    <section id="course-content" class="max-w-7xl mx-auto px-6 relative">
+
+        <!-- Sticky Module Tabs -->
+        <div class="module-tabs-bar mb-8">
+            <div class="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-lg p-2 flex gap-1.5 overflow-x-auto" role="tablist">
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="1" aria-selected="true" onclick="switchModule(1)">
+                    <span class="w-6 h-6 rounded-lg bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center font-black text-xs flex-shrink-0">1</span>
+                    <span>Set the Rules</span>
+                </button>
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="2" aria-selected="false" onclick="switchModule(2)">
+                    <span class="w-6 h-6 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-black text-xs flex-shrink-0">2</span>
+                    <span>AI-Proof</span>
+                </button>
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="3" aria-selected="false" onclick="switchModule(3)">
+                    <span class="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-black text-xs flex-shrink-0">3</span>
+                    <span>Integrate</span>
+                </button>
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="4" aria-selected="false" onclick="switchModule(4)">
+                    <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs flex-shrink-0">4</span>
+                    <span>Defend (Viva)</span>
+                </button>
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="5" aria-selected="false" onclick="switchModule(5)">
+                    <span class="w-6 h-6 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center font-black text-xs flex-shrink-0">5</span>
+                    <span>Cite &amp; Reflect</span>
+                </button>
+                <button class="module-tab bg-white border border-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2" data-module="6" aria-selected="false" onclick="switchModule(6)">
+                    <span class="w-6 h-6 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center font-black text-xs flex-shrink-0">★</span>
+                    <span>Cheat Sheet</span>
+                </button>
+            </div>
+        </div>
 
         <!-- =================================================== -->
         <!-- MODULE 1: Setting AI Guidelines (AIAS + Traffic Light)-->
         <!-- =================================================== -->
-        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+        <div class="module-panel is-active" data-module="1"><div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-assess to-transparent rounded-t-[2.5rem] opacity-60"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -379,12 +430,12 @@
                 <div class="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">💡 Pro-tip</div>
                 <p class="text-slate-200 font-medium leading-relaxed">Never leave AI policy to "department norms" — put the traffic-light colour, a one-sentence explanation, and the citation requirement <strong class="text-white">on every single assignment brief</strong>. Students should not have to guess.</p>
             </div>
-        </div>
+        </div></div><!-- /module-panel 1 -->
 
         <!-- =================================================== -->
         <!-- MODULE 2: AI-Proofing Traditional Assessments       -->
         <!-- =================================================== -->
-        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+        <div class="module-panel" data-module="2"><div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-rose to-transparent rounded-t-[2.5rem] opacity-60"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -500,7 +551,7 @@
                         <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center font-black text-sm">10</div>
                         <h4 class="font-heading font-black text-slate-900">Oral defense follow-up</h4>
                     </div>
-                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Any written submission is followed by a 3-5 min interview. See <a href="#module-4" class="text-assess font-bold underline">Module 4</a> for the full viva voce playbook.</p>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Any written submission is followed by a 3-5 min interview. See <a href="#" onclick="event.preventDefault(); switchModule(4);" class="text-assess font-bold underline">Module 4</a> for the full viva voce playbook.</p>
                 </div>
 
                 <!-- Move 11 -->
@@ -530,12 +581,12 @@
                     <p class="text-slate-700 font-medium text-sm leading-relaxed">Tools like Turnitin's AI detector and GPTZero produce <strong class="text-rose-700">false positives</strong> — especially against non-native English writers and neurodivergent students. Use them only as a conversation starter, never as proof of misconduct.</p>
                 </div>
             </div>
-        </div>
+        </div></div><!-- /module-panel 2 -->
 
         <!-- =================================================== -->
         <!-- MODULE 3: Integrating AI Into Assessments           -->
         <!-- =================================================== -->
-        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+        <div class="module-panel" data-module="3"><div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-transparent rounded-t-[2.5rem] opacity-60"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -699,12 +750,12 @@
                 <div class="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">🔒 Equity &amp; access</div>
                 <p class="text-slate-200 font-medium leading-relaxed">If your task requires AI, you must provide <strong class="text-white">equal access</strong>. Use school-licensed tools, provide shared accounts, or give in-class time. Never assume students have paid plans at home.</p>
             </div>
-        </div>
+        </div></div><!-- /module-panel 3 -->
 
         <!-- =================================================== -->
         <!-- MODULE 4: Viva Voce & Process-Based Grading         -->
         <!-- =================================================== -->
-        <div id="module-4" class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+        <div class="module-panel" data-module="4"><div id="module-4" class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-purple-600 to-transparent rounded-t-[2.5rem] opacity-60"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -862,12 +913,12 @@
                     <p class="text-slate-700 font-medium text-sm leading-relaxed">Don't try to viva every student on every task. Viva <strong class="text-purple-700">one in three</strong>, randomly chosen after submissions are in. The <em>possibility</em> of being called changes the behaviour of the whole class.</p>
                 </div>
             </div>
-        </div>
+        </div></div><!-- /module-panel 4 -->
 
         <!-- =================================================== -->
         <!-- MODULE 5: Citations & AI Reflections                -->
         <!-- =================================================== -->
-        <div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
+        <div class="module-panel" data-module="5"><div class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 lg:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative group">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyan-500 to-transparent rounded-t-[2.5rem] opacity-60"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -998,12 +1049,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div></div><!-- /module-panel 5 -->
 
         <!-- =================================================== -->
-        <!-- QUICK REFERENCE CARD                                -->
+        <!-- MODULE 6: QUICK REFERENCE CARD / CHEAT SHEET        -->
         <!-- =================================================== -->
-        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] p-8 lg:p-12 shadow-2xl border border-slate-800 relative overflow-hidden">
+        <div class="module-panel" data-module="6"><div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] p-8 lg:p-12 shadow-2xl border border-slate-800 relative overflow-hidden">
             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-assess via-rose to-amber-500"></div>
             <div class="absolute -top-20 -right-20 w-96 h-96 bg-assess/20 rounded-full blur-3xl"></div>
             <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
@@ -1050,6 +1101,19 @@
                     </a>
                 </div>
             </div>
+        </div></div><!-- /module-panel 6 -->
+
+        <!-- Prev / Next module navigation -->
+        <div class="mt-10 flex justify-between items-center gap-4">
+            <button id="prev-module" onclick="prevModule()" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-2xl hover:border-assess/40 hover:text-assess transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Previous
+            </button>
+            <span id="module-indicator" class="text-xs font-bold text-slate-500 uppercase tracking-widest">Module 1 of 6</span>
+            <button id="next-module" onclick="nextModule()" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-assess to-rose rounded-2xl hover:shadow-lg hover:shadow-assess/30 transition-all">
+                Next
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
         </div>
 
     </section>
@@ -1116,7 +1180,7 @@
             }
         }
 
-        // --- AIAS level tab switcher ---
+        // --- AIAS level tab switcher (inside Module 1) ---
         function switchLevel(n) {
             document.querySelectorAll('.level-tab').forEach(btn => {
                 const isActive = Number(btn.dataset.level) === n;
@@ -1126,6 +1190,46 @@
                 panel.classList.toggle('is-active', Number(panel.dataset.level) === n);
             });
         }
+
+        // --- Top-level module tab switcher ---
+        const TOTAL_MODULES = 6;
+        let currentModule = 1;
+
+        function switchModule(n) {
+            if (n < 1 || n > TOTAL_MODULES) return;
+            currentModule = n;
+            document.querySelectorAll('.module-tab').forEach(btn => {
+                btn.setAttribute('aria-selected', Number(btn.dataset.module) === n ? 'true' : 'false');
+            });
+            document.querySelectorAll('.module-panel').forEach(panel => {
+                panel.classList.toggle('is-active', Number(panel.dataset.module) === n);
+            });
+            // Update prev/next nav state
+            document.getElementById('prev-module').disabled = (n === 1);
+            document.getElementById('next-module').disabled = (n === TOTAL_MODULES);
+            document.getElementById('module-indicator').innerText = `Module ${n} of ${TOTAL_MODULES}`;
+            // Scroll to top of the course content area for context
+            const target = document.getElementById('course-content');
+            if (target) {
+                const top = target.getBoundingClientRect().top + window.pageYOffset - 100;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }
+        }
+
+        function nextModule() { switchModule(currentModule + 1); }
+        function prevModule() { switchModule(currentModule - 1); }
+
+        // Keyboard nav: arrow keys
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight') nextModule();
+            if (e.key === 'ArrowLeft')  prevModule();
+        });
+
+        // Initialise prev/next state on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('prev-module').disabled = true;
+        });
     </script>
 </body>
 </html>
